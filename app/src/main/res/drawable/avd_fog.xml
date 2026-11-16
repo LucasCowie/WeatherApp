@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Shape from the MIT-licensed weather-icons pack (see WEATHER_ICONS_LICENSE.txt), recoloured for this app -->
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:drawable="@drawable/ic_fog">
+    <target android:name="fog1">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:propertyName="translateX"
+                android:valueFrom="0"
+                android:valueTo="5"
+                android:duration="4000"
+                android:repeatCount="infinite"
+                android:repeatMode="reverse"
+                android:interpolator="@android:anim/linear_interpolator" />
+        </aapt:attr>
+    </target>
+    <target android:name="fog2">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:propertyName="translateX"
+                android:valueFrom="-4"
+                android:valueTo="4"
+                android:duration="5000"
+                android:repeatCount="infinite"
+                android:repeatMode="reverse"
+                android:interpolator="@android:anim/linear_interpolator" />
+        </aapt:attr>
+    </target>
+    <target android:name="fog3">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:propertyName="translateX"
+                android:valueFrom="3"
+                android:valueTo="-3"
+                android:duration="3000"
+                android:repeatCount="infinite"
+                android:repeatMode="reverse"
+                android:interpolator="@android:anim/linear_interpolator" />
+        </aapt:attr>
+    </target>
+    <target android:name="fog4">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:propertyName="translateX"
+                android:valueFrom="0"
+                android:valueTo="-4"
+                android:duration="3000"
+                android:repeatCount="infinite"
+                android:repeatMode="reverse"
+                android:interpolator="@android:anim/linear_interpolator" />
+        </aapt:attr>
+    </target>
+</animated-vector>

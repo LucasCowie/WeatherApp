@@ -17,8 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,76 +28,35 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.weatherapp.R
-import com.example.weatherapp.models.UpcomingWeather
+import com.example.weatherapp.data.ForecastDay
+import com.example.weatherapp.data.WeatherResponse
+import com.example.weatherapp.data.displayDate
+import com.example.weatherapp.data.icon
+import com.example.weatherapp.ui.BloodCard
+import kotlin.math.roundToInt
 
 @Composable
-fun UpcomingWeatherScreen() {
-
-    val forecast = listOf(
-        UpcomingWeather(
-            date = "Monday",
-            weatherType = "Sunny",
-            weatherIcon = R.drawable.avd_clear_day,
-            high = 18,
-            feelsLike = 17,
-            low = 8,
-            rainChance = 5,
-            rainAmount = 0,
-            windSpeed = 9,
-            windDiceration = "W",
-            humidity = 48
-        ),
-        UpcomingWeather(
-            date = "Tuesday",
-            weatherType = "Partly Cloudy",
-            weatherIcon = R.drawable.avd_partly_cloudy,
-            high = 15,
-            feelsLike = 13,
-            low = 6,
-            rainChance = 30,
-            rainAmount = 1,
-            windSpeed = 14,
-            windDiceration = "SW",
-            humidity = 62
-        ),
-        UpcomingWeather(
-            date = "Wednesday",
-            weatherType = "Showers",
-            weatherIcon = R.drawable.avd_showers,
-            high = 12,
-            feelsLike = 10,
-            low = 5,
-            rainChance = 80,
-            rainAmount = 6,
-            windSpeed = 20,
-            windDiceration = "S",
-            humidity = 85
-        )
-    )
-
+fun UpcomingWeatherScreen(weather: WeatherResponse) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(forecast) { day ->
-            UpcomingWeatherCard(day)
+        items(weather.forecast.days) { forecastDay ->
+            UpcomingWeatherCard(forecastDay)
         }
     }
 }
 
 @OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
-private fun UpcomingWeatherCard(weather: UpcomingWeather) {
-    val image = AnimatedImageVector.animatedVectorResource(weather.weatherIcon)
+private fun UpcomingWeatherCard(forecastDay: ForecastDay) {
+    val day = forecastDay.day
+    val image = AnimatedImageVector.animatedVectorResource(day.condition.icon())
     var atEnd by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { atEnd = true }
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
+    BloodCard(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -108,21 +65,25 @@ private fun UpcomingWeatherCard(weather: UpcomingWeather) {
         ) {
             Image(
                 painter = rememberAnimatedVectorPainter(image, atEnd),
-                contentDescription = weather.weatherType,
+                contentDescription = day.condition.text,
                 modifier = Modifier.size(56.dp)
             )
             Spacer(Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = weather.date, style = MaterialTheme.typography.titleMedium)
-                Text(text = weather.weatherType, style = MaterialTheme.typography.bodyMedium)
+                Text(text = forecastDay.displayDate, style = MaterialTheme.typography.titleMedium)
+                Text(text = day.condition.text, style = MaterialTheme.typography.bodyMedium)
                 Text(
-                    text = "Rain ${weather.rainChance}%  ·  Wind ${weather.windSpeed} km/h ${weather.windDiceration}",
+                    text = "Precip ${day.chanceOfPrecip}%  ·  ${day.totalPrecipMm} mm",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Text(
+                    text = "Wind up to ${day.maxWindKph.roundToInt()} km/h  ·  Humidity ${day.avgHumidity.roundToInt()}%",
                     style = MaterialTheme.typography.bodySmall
                 )
             }
             Column(horizontalAlignment = Alignment.End) {
-                Text(text = "${weather.high}°", style = MaterialTheme.typography.headlineSmall)
-                Text(text = "${weather.low}°", style = MaterialTheme.typography.bodyMedium)
+                Text(text = "${day.maxTempC.roundToInt()}°", style = MaterialTheme.typography.headlineSmall)
+                Text(text = "${day.minTempC.roundToInt()}°", style = MaterialTheme.typography.bodyMedium)
             }
         }
     }

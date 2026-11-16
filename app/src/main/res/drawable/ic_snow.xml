@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Shape from the MIT-licensed weather-icons pack (see WEATHER_ICONS_LICENSE.txt), recoloured for this app -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <group
+        android:translateX="-5"
+        android:translateY="-2">
+        <group
+            android:name="cloud">
+            <path
+                android:pathData="M43.7,22.4c0,-4.6 -3.7,-8.2 -8.2,-8.2 -1,0 -1.9,0.2 -2.8,0.5 -0.3,-3.4 -3.1,-6.2 -6.6,-6.2 -3.7,0 -6.7,3 -6.7,6.7 0,0.8 0.2,1.6 0.4,2.3 -0.3,-0.1 -0.7,-0.1 -1,-0.1 -3.7,0 -6.7,3 -6.7,6.7 0,3.6 2.9,6.6 6.5,6.7h17.2c4.4,-0.5 7.9,-4 7.9,-8.4z"
+                android:fillColor="#9B1B24"
+                android:strokeColor="#4A0A10"
+                android:strokeWidth="1.2"
+                android:strokeLineJoin="round" />
+        </group>
+        <group
+            android:name="snow1"
+            android:translateX="19"
+            android:translateY="33">
+            <path
+                android:name="flake1"
+                android:pathData="M0,-2.5 V2.5 M-2.5,0 H2.5 M-1.77,-1.77 L1.77,1.77 M-1.77,1.77 L1.77,-1.77"
+                android:strokeColor="#F5E6E0"
+                android:strokeWidth="1.2"
+                android:strokeLineCap="round" />
+        </group>
+        <group
+            android:name="snow2"
+            android:translateX="27"
+            android:translateY="33">
+            <path
+                android:name="flake2"
+                android:pathData="M0,-2.5 V2.5 M-2.5,0 H2.5 M-1.77,-1.77 L1.77,1.77 M-1.77,1.77 L1.77,-1.77"
+                android:strokeColor="#F5E6E0"
+                android:strokeWidth="1.2"
+                android:strokeLineCap="round" />
+        </group>
+        <group
+            android:name="snow3"
+            android:translateX="36"
+            android:translateY="33">
+            <path
+                android:name="flake3"
+                android:pathData="M0,-2.5 V2.5 M-2.5,0 H2.5 M-1.77,-1.77 L1.77,1.77 M-1.77,1.77 L1.77,-1.77"
+                android:strokeColor="#F5E6E0"
+                android:strokeWidth="1.2"
+                android:strokeLineCap="round" />
+        </group>
+    </group>
+</vector>
