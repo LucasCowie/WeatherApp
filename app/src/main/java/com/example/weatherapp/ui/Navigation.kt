@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -60,23 +61,27 @@ fun Navigation(viewModel: MainViewModel = viewModel()) {
     val context = LocalContext.current
     val weather = viewModel.weather
 
-    // Shows the system "Allow location?" dialog, then loads weather for the device's location.
-    // If we can't get a location, we don't guess a city: the user is asked to choose one instead.
+    // What to do with the device's location once we have it:
+    // true = show its weather, false = only fill in the name under "My Location"
+    var showDeviceWeather by remember { mutableStateOf(true) }
+
+    // Shows the system "Allow location?" dialog, then finds the device's location.
+    // If we can't get one, we don't guess a city: the user is asked to choose one instead.
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { results ->
         if (results.values.any { it }) {
             getDeviceLocation(context) { latLon ->
-                if (latLon != null) viewModel.loadWeather(latLon, isDeviceLocation = true)
-                else viewModel.locationError = "Couldn't find this device's location."
+                viewModel.onDeviceLocation(latLon, showDeviceWeather, "Couldn't find this device's location.")
             }
         } else {
-            viewModel.locationError = "Location permission was not allowed."
+            viewModel.onDeviceLocation(null, showDeviceWeather, "Location permission was not allowed.")
         }
     }
 
-    fun loadDeviceLocation() {
-        viewModel.locationError = null // back to the spinner while we try
+    fun findDeviceLocation(showWeather: Boolean) {
+        showDeviceWeather = showWeather
+        if (showWeather) viewModel.locationError = null // back to the spinner while we try
         permissionLauncher.launch(
             arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
         )
@@ -84,10 +89,12 @@ fun Navigation(viewModel: MainViewModel = viewModel()) {
 
     fun openLocations() = navController.navigate("locations") { launchSingleTop = true }
 
-    // Show the city the user picked last time, otherwise the device's location
+    // The app always finds the device's location when it starts. If the user picked a city last time,
+    // that city's weather is shown and the device's location is only used for the "My Location" name.
     fun loadStartingLocation() {
         val saved = viewModel.savedLocation
-        if (saved != null) viewModel.loadWeather(saved) else loadDeviceLocation()
+        if (saved != null) viewModel.loadWeather(saved)
+        findDeviceLocation(showWeather = saved == null)
     }
 
     // On app start (skipped on screen rotation, when the ViewModel already has data)
@@ -185,11 +192,17 @@ fun Navigation(viewModel: MainViewModel = viewModel()) {
                     WeatherOrStatus(viewModel, ::loadStartingLocation, ::openLocations) { UpcomingWeatherScreen(it) }
                 }
                 composable(route = "locations") {
+                    // Opening this screen asks for the device's location if we don't have it yet
+                    // (but not while the app is still starting up and already looking for it)
+                    LaunchedEffect(Unit) {
+                        val startingUp = viewModel.weather == null && viewModel.locationError == null
+                        if (viewModel.myLocationName == null && !startingUp) findDeviceLocation(showWeather = false)
+                    }
                     LocationsScreen(
                         viewModel = viewModel,
                         onMyLocation = {
                             viewModel.saveLocation(null) // forget the picked city
-                            loadDeviceLocation()
+                            findDeviceLocation(showWeather = true)
                             navController.popBackStack()
                         },
                         onCitySelected = { city ->

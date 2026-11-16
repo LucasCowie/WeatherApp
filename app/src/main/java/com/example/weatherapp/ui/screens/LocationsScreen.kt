@@ -81,7 +81,7 @@ fun LocationsScreen(
             OutlinedTextField(
                 value = query,
                 onValueChange = { query = it },
-                label = { Text("Search for a city") },
+                label = { Text("Search for a Canadian city") },
                 singleLine = true,
                 // Search from the keyboard's search key or the magnifier button
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),

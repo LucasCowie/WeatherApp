@@ -59,6 +59,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    // Called once we know the device's location ("lat,lon"), or with null and the reason if we couldn't get it.
+    // showWeather = true: show that location's weather. false: only look up its name for "My Location".
+    fun onDeviceLocation(latLon: String?, showWeather: Boolean, problem: String) {
+        when {
+            latLon == null -> if (showWeather) locationError = problem
+            showWeather -> loadWeather(latLon, isDeviceLocation = true)
+            else -> viewModelScope.launch { myLocationName = WeatherRepository.findLocationName(latLon) }
+        }
+    }
+
     // Remember the user's choice for next time. Pass null to go back to the device's location.
     fun saveLocation(location: String?) {
         prefs.edit { putString("location", location) }

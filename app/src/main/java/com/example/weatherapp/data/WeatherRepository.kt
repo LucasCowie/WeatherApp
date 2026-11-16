@@ -47,14 +47,23 @@ object WeatherRepository {
         try {
             searchResults = withNetworkTimeout {
                 api.searchCities(BuildConfig.WEATHER_API_KEY, query)
-            }
-            if (searchResults.isEmpty()) searchError = "No cities found for \"$query\""
+            }.filter { it.country == "Canada" } // the assignment asks for Canadian cities only
+            if (searchResults.isEmpty()) searchError = "No Canadian cities found for \"$query\""
         } catch (e: Exception) {
             rethrowIfCancelled(e)
             searchResults = emptyList()
             searchError = "Search failed: ${e.message}"
         }
     }
+
+    // The name of the place at "lat,lon" (e.g. "Halifax"), or null if the lookup fails
+    suspend fun findLocationName(latLon: String): String? =
+        try {
+            withNetworkTimeout { api.searchCities(BuildConfig.WEATHER_API_KEY, latLon) }.firstOrNull()?.name
+        } catch (e: Exception) {
+            rethrowIfCancelled(e)
+            null
+        }
 
     // Give up after 15s so a bad connection shows an error instead of spinning forever
     private suspend fun <T> withNetworkTimeout(request: suspend () -> T): T =
